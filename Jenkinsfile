@@ -1,30 +1,23 @@
 pipeline {
-    agent any
-    environment{
-        PROJECT_ID = "sca-tasks"
-        CLUSTER_NAME= "noteapp-cluster-prod"
-        LOCATION = "us-west1"
-        CREDENTIALS_ID = "sca-tasks"
-    
-    }
-    stages {
+
+  environment {
+    PROJECT = "sca-tasks"
+    CLUSTER = "noteapp-cluster-prod"
+    CLUSTER_ZONE = "us-west1"
+    APP_NAME = "noteapp"
+    IMAGE_TAG = "gcr.io/${PROJECT}/${APP_NAME}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+    JENKINS_CRED = "${PROJECT}"
+  }
+  stages {
         stage("Checkout code") {
             steps {
                 checkout scm
             }
         }
-        stage("Initilize") {
+        stage('Build and push image with Container Builder') {
             steps {
-                script {
-                    def dockerHome = tool 'myDocker'
-                    env.PATH = "${dockerHome}/bin:${env.PATH}"
-                }
-            }
-        }
-        stage("Build image") {
-            steps {
-                script {
-                    noteapp = docker.build("tolulopeayo/k8s-noteapp:${env.BUILD_ID}")
+                container('gcloud') {
+                sh "PYTHONUNBUFFERED=1 gcloud builds submit -t ${IMAGE_TAG} ."    
                 }
             }
         }

@@ -62,7 +62,7 @@ mongoose.connect(databaseUrl, {
 
 app.use(notesRoute);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 
 app.listen(port, () => {
     console.log(`PORT active on ${port}`);

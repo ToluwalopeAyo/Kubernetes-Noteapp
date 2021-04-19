@@ -15,9 +15,9 @@ spec:
     spec:
       containers:
         - name: app
-          image: tolulopeayo/k8s-noteapp:latest
+          image: gcr.io/sca-tasks/noteapp@sha256:ffd6f8eff3e803a1ac68b1360caa842b4fdc8256b0effa65eb9f197f4b2ef5dc
           ports:
-            - containerPort: 3000
+            - containerPort: 8000
           env:
             - name: DATABASE
               value: mongodb://mongo:27017/noteapp
@@ -35,5 +35,5 @@ spec:
     app: k8s-noteapp
   ports:
     - port: 80
-      targetPort: 3000
+      targetPort: 8000
   type: LoadBalancer 
