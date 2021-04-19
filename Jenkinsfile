@@ -13,11 +13,10 @@ pipeline {
                 checkout scm
             }
         }
-        stage("Build image") {
+        stage("Initilize") {
             steps {
-                script {
-                    noteapp = docker.build("tolulopeayo/k8s-noteapp:${env.BUILD_ID}")
-                }
+                def dockerHome = tool 'myDocker'
+                env.PATH = "${dockerHome}/bin:${env.PATH}"
             }
         }
     }
