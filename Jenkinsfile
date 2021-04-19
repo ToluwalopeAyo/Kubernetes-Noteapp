@@ -5,8 +5,7 @@ pipeline {
         CLUSTER_NAME= "jenkins-cd"
         LOCATION = "us-east1-d"
         CREDENTIALS_ID = "sca-tasks"
-        DOCKER_TAG = getDockerTag()
-        IMAGE_URL_WITH_TAG = "tolulopeyo/k8s-noteapp:${DOCKER_TAG}"
+    
     }
     stages {
         stage("checkout code") {
@@ -16,14 +15,17 @@ pipeline {
         }
         stage("Build image") {
             steps {
-                sh "docker build . -t ${IMAGE_URL_WITH_TAG}"
+                script {
+                    noteapp = docker.build("tolulopeayo/k8s-noteapp:${env.BUILD_ID}")
+                }
             }
         }
         stage("Push Image") {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-                        sh "docker push ${IMAGE_URL_WITH_TAG}"
+                        noteapp.push("latest")
+                        noteapp.push("${env.BUILD_ID}")
                     }
                 }
             }
@@ -36,8 +38,4 @@ pipeline {
             }
         }
     }
-}
-def getDockerTag(){
-    def tag  = sh script: 'git rev-parse HEAD', returnStdout: true
-    return tag
 }
