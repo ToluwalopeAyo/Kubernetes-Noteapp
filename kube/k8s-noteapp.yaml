@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: tolulopeayo/k8s-noteapp:1.0.0
+          image: tolulopeayo/k8s-noteapp:latest
           ports:
             - containerPort: 3000
           env:
