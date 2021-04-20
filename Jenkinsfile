@@ -21,5 +21,13 @@ pipeline {
                 }
             }
         }
+        stage("Build image") {
+            steps {
+                script {
+                    noteapp = docker.build("tolulopeayo/k8s-noteapp:${env.BUILD_ID}")
+                }
+            }
+        }
+
     }
 }    
