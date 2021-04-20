@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: gcr.io/sca-tasks/noteapp@sha256:ffd6f8eff3e803a1ac68b1360caa842b4fdc8256b0effa65eb9f197f4b2ef5dc
+          image: tolulopeayo/k8s-noteapp:latest
           ports:
             - containerPort: 8000
           env:

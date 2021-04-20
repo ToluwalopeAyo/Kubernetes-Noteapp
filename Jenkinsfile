@@ -1,59 +1,40 @@
 pipeline {
-    environment {
-        PROJECT = "sca-tasks"
-        APP_NAME = "noteapp"
-        CLUSTER = "test"
-        CLUSTER_ZONE = "us-east1-d"
-        IMAGE_TAG = "gcr.io/${PROJECT}/${APP_NAME}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
-        JENKINS_CRED = "${PROJECT}"
+    agent any
+    environment{
+        PROJECT_ID = "sca-tasks"
+        CLUSTER_NAME= "jenkins-cd"
+        LOCATION = "us-east1-d"
+        CREDENTIALS_ID = "sca-tasks"
+    
     }
-    agent {
-    kubernetes {
-      label 'noteapp'
-      defaultContainer 'jnlp'
-      yaml """
-apiVersion: v1
-kind: Pod
-metadata:
-labels:
-  component: ci
-spec:
-  # Use service account that can deploy to all namespaces
-  serviceAccountName: cd-jenkins
-  containers:
-  - name: gcloud
-    image: gcr.io/cloud-builders/gcloud
-    command:
-    - cat
-    tty: true
-  - name: kubectl
-    image: gcr.io/cloud-builders/kubectl
-    command:
-    - cat
-    tty: true
-"""
-    }
-}
-    stages{
+    stages {
         stage("Checkout code") {
             steps {
                 checkout scm
             }
         }
-        stage('Build and push image with Container Builder') {
+        stage("Build image") {
             steps {
-                container('gcloud') {
-                    sh "PYTHONUNBUFFERED=1 gcloud builds submit -t ${IMAGE_TAG} ."
+                script {
+                    noteapp = docker.build("tolulopeayo/k8s-noteapp:${env.BUILD_ID}")
                 }
             }
         }
-        stage ('Deploy to GKE'){
+        stage("Push Image") {
             steps {
-                container('kubectl') {
-                    sh("sed -i.bak 's#gcr.io/cloud-solutions-images/gceme:1.0.0#${IMAGE_TAG}#' ./kube/k8s-noteapp.yaml")
-                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_ZONE, manifestPattern: 'kube/mongo.yaml', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
-                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_ZONE, manifestPattern: 'kube/k8s-noteapp.yaml', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                        noteapp.push("latest")
+                        noteapp.push("${env.BUILD_ID}")
+                    }
                 }
+            }
+        }
+        stage("Deploy to GKE") {
+            steps {
+                sh "sed -i 's/k8s-noteapp:latest/k8s:${env.BUILD_ID}/g' ./kube/k8s-noteapp.yaml"
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'kube/mongo.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'kube/k8s-noteapp.yaml', credentialsId: env.CREDENTIALS_ID ])
             }
         }
     }
