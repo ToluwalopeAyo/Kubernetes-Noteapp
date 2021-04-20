@@ -47,5 +47,14 @@ spec:
                 }
             }
         }
+        stage ('Deploy to GKE'){
+            steps {
+                container('kubectl') {
+                    sh("sed -i.bak 's#gcr.io/cloud-solutions-images/gceme:1.0.0#${IMAGE_TAG}#' ./kube/k8s-noteapp.yaml")
+                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_ZONE, manifestPattern: 'kube/mongo.yaml', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
+                    step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT, clusterName: env.CLUSTER, location: env.CLUSTER_ZONE, manifestPattern: 'kube/k8s-noteapp.yaml', credentialsId: env.JENKINS_CRED, verifyDeployments: true])
+                }
+            }
+        }
     }
 }
