@@ -33,4 +33,20 @@ spec:
     - cat
     tty: true
 """
+    }
+}
+    stages{
+        stage("Checkout code") {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build and push image with Container Builder') {
+            steps {
+                container('gcloud') {
+                    sh "PYTHONUNBUFFERED=1 gcloud builds submit -t ${IMAGE_TAG} ."
+                }
+            }
+        }
+    }
 }
