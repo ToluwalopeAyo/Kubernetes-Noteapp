@@ -37,7 +37,7 @@ spec:
     spec:
       containers:
         - name: mongo
-          image: mongodb://mongo:27017/noteapp
+          image: mongo:3.6.17-xenial
           ports:
             - containerPort: 27017
           volumeMounts:
