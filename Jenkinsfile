@@ -41,8 +41,8 @@ pipeline {
         stage("Deploy to GKE") {
             steps {
                 sh "sed -i 's/k8s-noteapp:latest/k8s:${env.BUILD_ID}/g' ./kube/k8s-noteapp.yaml"
-                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'kube/mongo.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'kube/k8s-noteapp.yaml', credentialsId: env.CREDENTIALS_ID ])
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: './kube/mongo.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: './kube/k8s-noteapp.yaml', credentialsId: env.CREDENTIALS_ID ])
             }
         }
 
