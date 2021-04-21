@@ -8,6 +8,6 @@ services:
             - 3000:3000
         environment: 
             DATABASE: mongodb://mongo:27017/noteapp
-            session_key: someRandomString    
+            session_key: ceec556d02d03e6fdafd6dbd5c893bdad481f234    
     mongodb:
         image: mongo

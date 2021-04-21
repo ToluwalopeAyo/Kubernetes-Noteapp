@@ -36,7 +36,7 @@ We can now run the mongodb and the app
 Mongodb is the name of the container while mongo is the name of the image
 
 ```
-docker run --name=noteapp -dp 8000:8080 -e DATABASE=mongodb://mongo:27017/noteapp -e session_key=someRandomString --network=noteapp-net noteapp
+docker run --name=noteapp -dp 8000:8080 -e DATABASE=mongodb://mongo:27017/noteapp -e session_key=ceec556d02d03e6fdafd6dbd5c893bdad481f234 --network=noteapp-net noteapp
 ```
 
 The application would connect to the database and would be open on port 8080 of the localhost
