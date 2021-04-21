@@ -1,77 +1,68 @@
-# noteApp
+# SCA FINAL PROJECT
 
-## Simple NodeJS app to keep a record of __NOTES__ in mongoDB database
+## Project: Deploying A Noteapp With A MongoDB To Kubernetes Using Jenkins CI/CD Pipeline
 
-### made using Express, Mongoose and other dependencies like body-parser, multer, method-override, express-session, connect-flash, async etc
+I’ll be using Terraform to Provision the Kubernetes Cluster and The Jenkins Server.
 
-### Authentication using Passport, Crypto and nodemailer
+Link to Terraform Repository: `https://github.com/ToluwalopeAyo/Terraform.git`
 
-### Ejs view engine, Bootstrap and Vanilla JavaScript
+Link to App Repository: `https://github.com/ToluwalopeAyo/Kubernetes-Noteapp.git`
 
-## Steps to Run this Project
+### Running The Application Locally
 
-### 1. Clone the Repo
+Create a config.env file in the root of the project and store a variable for the database to connect to the MongoDB database and the session-key
 
-### 2. Connect to mongoDB database defining **_DATABASE_** varriable in **config.env**
+```
+npm install
+node app.js
+```
+The app is open on port 8000
 
-### 3. Run Commands
->
-> * npm install
-> * nodemon
+### Containerising The Application
 
-### V-1.0.2 updates
->
-> * Added Authentication to use app
-> * Notes Panel still kept public
-> * Author name tails Title after Adding or Editing a note
-> * Functionality to Reset Password using email based authentication
+The Dockerfile is at the root of the project
 
-### V-1.0.1 updates
->
-> * Added uploading image
-> * Separate page for viewing note
-> * Dark Mode in alfa
-> * Added more bugs to fix later 😉
+```docker build -t noteapp .```
 
-#### Viewing a Note
->
-> ![list_of_notes](/demo_gifs/viewing_a_note.gif)
+This would create a docker image of the application that we would run later
 
-#### Added Image Uploads
->
-> ![list_of_notes](/demo_gifs/uploading_a_image.gif)
+To run the containerised app with the mongodb database, the database and the application has to be in the same network so that they can communicate with each other. Create a new network
 
-#### Dark Mode Alfa
->
-> ![list_of_notes](/demo_gifs/darkMode.gif)
+``` docker network create noteapp-net```
 
-## Preview
+We can now run the mongodb and the app
 
-> ### 1. List of notes
->
-> ![list_of_notes](/demo_gifs/noteList.png)
->
-> ### 2. Adding a note
->
-> ![list_of_notes](/demo_gifs/adding_a_note.gif)
->
-> ### 3. Editing a note
->
-> ![list_of_notes](/demo_gifs/editing_a_note.gif)
->
-> ### 3. Searching a note
->
-> ![list_of_notes](/demo_gifs/search_a_note.gif)
->
-> ### 4. Deleting a note
->
-> ![list_of_notes](/demo_gifs/deleting_a_note.gif)
->
-> ### 5. Deleting a tag
->
->![list_of_notes](/demo_gifs/deleting_a_tag.gif)
->
+```docker run --name=mongodb -d --network=noteapp-net mongo```
 
-# made with ❣️ by Ronit
+Mongodb is the name of the container while mongo is the name of the image
 
-[![Run on Repl.it](https://repl.it/badge/github/RonitKumar09/noteApp)](https://repl.it/github/RonitKumar09/noteApp)
+```
+docker run --name=noteapp -dp 8000:8080 -e DATABASE=mongodb://mongo:27017/noteapp -e session_key=someRandomString --network=noteapp-net noteapp
+```
+
+The application would connect to the database and would be open on port 8080 of the localhost
+
+### The Jenkins Server
+
+- Install Jenkins and start it
+- Install docker and add jenkins to the docker group 
+
+```sudo usermod -a -G docker jenkins```
+
+- Restart Jenkins
+
+```sudo systemctl restart jenkins```
+
+- Install Kubectl
+
+- Login to Jenkins
+
+- Install Docker Pipeline and Google Kubernetes Plugin
+
+- Create a Service Account with **Kubernetes Engine Admin** permission and created a json key for iy
+
+- Add dockerhub and service account credentials to give jenkins permission to Kubernetes and Docker hub
+
+Create a github-webkook in the github repository with the ip address of the Jenkins Server `http://ip-address:8080/github-webhook/`
+
+### Configuring The Pipeline
