@@ -4,9 +4,8 @@
 
 I’ll be using Terraform to Provision the Kubernetes Cluster and The Jenkins Server.
 
-Link to Terraform Repository: `https://github.com/ToluwalopeAyo/Terraform.git`
+[Link to Terraform Repository](https://github.com/ToluwalopeAyo/Terraform.git)
 
-Link to App Repository: `https://github.com/ToluwalopeAyo/Kubernetes-Noteapp.git`
 
 ### Running The Application Locally
 
@@ -67,4 +66,15 @@ Create a github-webkook in the github repository with the ip address of the Jenk
 
 ### Configuring The Pipeline
 
-! [](readme pics\Jenkins pic.PNG)
+![](readme%20pics/Jenkins%203.PNG)
+
+![](readme%20pics/jenk.png)
+
+![](readme%20pics/Jenkk.png)
+
+![](readme%20pics/Jenkins-4.PNG)
+
+The app is then deployed to kubernetes using and is exposed using the Kubernetes loadbalancer service
+
+![](readme%20pics/Kubernetes.png)
+

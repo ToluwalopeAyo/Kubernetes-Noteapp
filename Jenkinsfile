@@ -42,7 +42,7 @@ pipeline {
             steps {
                 sh "sed -i 's/k8s-noteapp:latest/k8s-noteapp:${env.BUILD_ID}/g' k8s-note.yaml"
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'mongo.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'k8s-note.yaml', credentialsId: env.CREDENTIALS_ID verifyDeployments: true])
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'k8s-note.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
         }
 
