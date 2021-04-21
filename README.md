@@ -66,3 +66,5 @@ The application would connect to the database and would be open on port 8080 of 
 Create a github-webkook in the github repository with the ip address of the Jenkins Server `http://ip-address:8080/github-webhook/`
 
 ### Configuring The Pipeline
+
+! [](readme pics\Jenkins pic.PNG)
